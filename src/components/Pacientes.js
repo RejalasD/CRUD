@@ -1,7 +1,8 @@
 import React, { Fragment } from 'react'
 
 const Pacientes = (citas) => {
-
+    let citasF = [];
+    citasF = citas.citas;
     if (citas.length === 0) return null;
 
     return (
@@ -18,11 +19,10 @@ const Pacientes = (citas) => {
 
                     <div className="col-md-8 mx-auto">
                         <div className="list-group">
-                            {citas.map(cita => (
+                        {citasF.map(cita => (
                                 <h3 className="mb-3">{cita.nombre}</h3>
                             ))}
-
-                           <h1>holaaaaa</h1>
+                            
                         </div>
 
                     </div>
