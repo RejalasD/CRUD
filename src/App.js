@@ -25,7 +25,7 @@ function App() {
 
             //coloca en el state el resultado
             guardarcitas(respuesta.data);
-            
+
             // deshabilitar la consulta
             guardarConsulta(false);
           })
@@ -43,20 +43,31 @@ function App() {
       <Switch>
 
         <Route
-          exact path="/" component={() => <Pacientes citas={citas}/>}
+          exact path="/" component={() => <Pacientes citas={citas} />}
         />
 
         <Route
-          exact path="/nueva" component={() => <NuevaCita guardarConsulta={guardarConsulta}/>}
+          exact path="/nueva" component={() => <NuevaCita guardarConsulta={guardarConsulta} />}
         />
 
         <Route
-          exact path="/cita/:id" component={Cita}
+          exact
+          path="/cita/:id"
+          render={(props) => {
+
+            const cita = citas.filter(cita => cita._id === props.match.params.id);
+
+            //console.log(cita)
+            return (
+              <Cita
+                cita={cita}
+              />
+            )
+
+          }}
+
         />
-
-
       </Switch>
-
     </Router>
   );
 }
