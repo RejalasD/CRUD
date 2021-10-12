@@ -1,6 +1,8 @@
-import React, { Fragment, useState } from 'react'
-import { Link } from 'react-router-dom'
-const NuevaCita = () => {
+import React, { Fragment, useState } from 'react';
+import { Link,withRouter } from 'react-router-dom';
+
+import ClienteAxios from '../config/axios';
+const NuevaCita = (props) => {
 
     //Generar State como  objeto
     const [cita, guardacita] = useState({
@@ -13,17 +15,36 @@ const NuevaCita = () => {
 
     });
 
+
+
+
     //Lee los datos del formulario
     const actualizarState = e => {
         // console.log(e.target.name); .target.name indica en que campos estamos escribiendo
-        // console.log(e.target.value); target.value indica que es lo que escribiento el usuario
+        // console.log(e.target.value); target.value indica que es lo que escribiendoo el usuario
 
         guardacita({
-            ...cita,
-            [e.target.name]: e.target.value
+            ...cita,                           // toma una copia actual de lo que haya en el state   
+            [e.target.name]: e.target.value  // lee lo que el usuario esta escribiendo y lo asigna automaticamente en el state
 
         });
 
+    };
+
+    //enviar una peticion  a la API
+    const crearNuevaCita = e => {
+        e.preventDefault();
+
+        //enviar peticion por Axios
+        ClienteAxios.post('/pacientes', cita)
+            .then(respuesta => {
+                console.log(respuesta);
+                props.guardarConsulta(true);    //redirecciona hacia la app principal detecta que consultar esta como true vuelve a consultar a la BD y trae copia con los ultimos cambios
+
+                //redireccionar 
+                props.history.push('/');       //se utiliza props para direccionar al usuario
+
+            })
     }
 
     return (
@@ -37,7 +58,9 @@ const NuevaCita = () => {
                         font-weight-bold">Volver</Link>
                     </div>
                     <div className="col-md-8 mx-auto">
-                        <form className="bg-white p-5 bordered">
+                        <form
+                            onSubmit={crearNuevaCita} // para enviar la nueva cita a la API
+                            className="bg-white p-5 bordered">
                             <div className="form-group">
                                 <label htmlFor="nombre">Nombre Mascota</label>
                                 <input
@@ -81,6 +104,7 @@ const NuevaCita = () => {
                                     className="form-control form-control-lg"
                                     id="fecha"
                                     name="fecha"
+                                    onChange={actualizarState}
                                 />
                             </div>
 
@@ -115,4 +139,4 @@ const NuevaCita = () => {
     );
 
 }
-export default NuevaCita;
+export default withRouter(NuevaCita);

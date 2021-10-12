@@ -13,36 +13,41 @@ function App() {
 
   //State de la app
   const [citas, guardarcitas] = useState([]);
- 
- 
+  const [consultar, guardarConsulta] = useState(true); //esta como true ya que la primera  vez que se haga un refresh debe consultar la api
+
+
   useEffect(() => {
     const consultarAPI = () => {
 
-      ClienteAxios.get("/pacientes")
-        .then(respuesta => {
+      if (consultar) {
+        ClienteAxios.get("/pacientes")
+          .then(respuesta => {
 
-          //colocar en el state el resultado
-          guardarcitas(respuesta.data);
-          //console.log(respueta.data)
-        })
-        .catch(error => {
-          console.log(error)
-        })
+            //coloca en el state el resultado
+            guardarcitas(respuesta.data);
+            
+            // deshabilitar la consulta
+            guardarConsulta(false);
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      }
     }
 
     consultarAPI();
-  }, []);
+  }, [consultar]);
 
   return (
     <Router>
       <Switch>
 
         <Route
-          exact path="/" component={() => <Pacientes citas={citas} />}
+          exact path="/" component={() => <Pacientes citas={citas}/>}
         />
 
         <Route
-          exact path="/nueva" component={NuevaCita}
+          exact path="/nueva" component={() => <NuevaCita guardarConsulta={guardarConsulta}/>}
         />
 
         <Route
