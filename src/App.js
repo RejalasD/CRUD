@@ -57,10 +57,10 @@ function App() {
 
             const cita = citas.filter(cita => cita._id === props.match.params.id);
 
-            //console.log(cita)
+            console.log(cita)
             return (
               <Cita
-                cita={cita}
+                cita={cita[(0)]}
               />
             )
 
