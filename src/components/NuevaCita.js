@@ -1,7 +1,9 @@
 import React, { Fragment, useState } from 'react';
 import { Link,withRouter } from 'react-router-dom';
-
 import ClienteAxios from '../config/axios';
+import Swal from 'sweetalert2';
+
+
 const NuevaCita = (props) => {
 
     //Generar State como  objeto
@@ -34,7 +36,13 @@ const NuevaCita = (props) => {
     //enviar una peticion  a la API
     const crearNuevaCita = e => {
         e.preventDefault();
-
+        Swal.fire({
+            position: 'top-center',
+            icon: 'success',
+            title: 'La cita fue creada!',
+            showConfirmButton: false,
+            timer: 1500
+          })
         //enviar peticion por Axios
         ClienteAxios.post('/pacientes', cita)
             .then(respuesta => {

@@ -1,7 +1,7 @@
-import React, { Fragment } from 'react'
-import { Link, withRouter } from 'react-router-dom'
-
-
+import React, { Fragment } from 'react';
+import { Link, withRouter } from 'react-router-dom';
+import ClienteAxios from '../config/axios';
+import Swal from 'sweetalert2';
 const Cita = (props) => {
 
     if (!props.cita) {
@@ -11,8 +11,49 @@ const Cita = (props) => {
 
     //extraer por props
 
-    const { cita: { nombre, propietario, fecha, hora, telefono, sintomas } } = props;
+    const { cita: { _id, nombre, propietario, fecha, hora, telefono, sintomas } } = props;
 
+
+    //Eliminar un registro
+    const eliminarCita = id => {
+        
+
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Una cita eliminada no se puede recuperar!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, eliminar!',
+            cancelButtonCText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // alerta de eliminado
+
+
+                Swal.fire(
+                    'Eliminado!',
+                    'La cita fue eliminada.',
+                    'success'
+                )
+
+                    //Eliminado de la base de datos
+                    ClienteAxios.delete(`/pacientes/${id}`)
+                    .then(respuesta => {
+                        props.guardarConsulta(true);
+                        props.history.push("/");
+
+
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+
+            }
+        })
+
+    }
     return (
 
 
@@ -49,6 +90,7 @@ const Cita = (props) => {
                                     <button type="button"
                                         className="text-uppercase py-2 px-5
                                         font-weight-bold btn btn-danger col"
+                                        onClick={() => eliminarCita(_id)}
                                     >
                                         eliminar &times;
                                     </button>
