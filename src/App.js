@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-
 import ClienteAxios from "./config/axios";
 
 
@@ -8,6 +7,7 @@ import ClienteAxios from "./config/axios";
 import Pacientes from "./components/Pacientes";
 import NuevaCita from "./components/NuevaCita";
 import Cita from "./components/Cita";
+import EditarCita from "./components/EditarCita"
 
 function App() {
 
@@ -16,7 +16,7 @@ function App() {
   const [consultar, guardarConsulta] = useState(true); //esta como true ya que la primera  vez que se haga un refresh debe consultar la api
 
 
-  useEffect(() => {
+  useEffect(() => {   // Realiza una reload de los pacientes
     const consultarAPI = () => {
 
       if (consultar) {
@@ -39,6 +39,7 @@ function App() {
   }, [consultar]);
 
   return (
+    
     <Router>
       <Switch>
 
@@ -49,6 +50,27 @@ function App() {
         <Route
           exact path="/nueva" component={() => <NuevaCita guardarConsulta={guardarConsulta} />}
         />
+        {/* <Route
+          exact path="/editar/:id" component={() => <Editar guardarConsulta={guardarConsulta} />}
+        /> */}
+
+        <Route
+          exact
+          path="/editar/:id"
+          render={(props) => {
+
+            const cita = citas.filter(cita => cita._id === props.match.params.id);
+
+            return (
+              <EditarCita
+                cita={cita[(0)]}
+                guardarConsulta={guardarConsulta}
+              />
+            )
+
+          }}
+
+        />
 
         <Route
           exact
@@ -57,7 +79,6 @@ function App() {
 
             const cita = citas.filter(cita => cita._id === props.match.params.id);
 
-            console.log(cita)
             return (
               <Cita
                 cita={cita[(0)]}

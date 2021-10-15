@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import ClienteAxios from '../config/axios';
 import Swal from 'sweetalert2';
+
 const Cita = (props) => {
 
     if (!props.cita) {

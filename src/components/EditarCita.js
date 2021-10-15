@@ -1,26 +1,56 @@
 import React, { Fragment, useState } from 'react';
-import { Link,withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import ClienteAxios from '../config/axios';
 import Swal from 'sweetalert2';
 
 
-const NuevaCita = (props) => {
+const EditarCita = (props) => {
 
     //Generar State como  objeto
     const [cita, guardacita] = useState({
-        nombre: '',
-        propietario: '',
-        fecha: '',
-        hora: '',
-        telefono: '',
-        sintomas: ''
+        nombre: props.cita.nombre,
+        propietario: props.cita.propietario,
+        fecha: props.cita.fecha,
+        hora: props.cita.hora,
+        telefono: props.cita.telefono,
+        sintomas: props.cita.sintomas
 
     });
 
-   
+    const editarCita = id => {
+
+        Swal.fire({
+            title: '¿Estás seguro que quieres editar la cita?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, editar!',
+            cancelButtonCText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
 
 
+                // alerta de editado
+                Swal.fire(
+                    'Editado!',
+                    'La cita fue editada.',
+                    'success'
+                )
 
+                //Editando de la base de datos
+                ClienteAxios.put(`/paciente/${id}`, cita)
+                    .then(respuesta => {
+                        props.guardarConsulta(true);
+                        props.history.push("/");
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+
+            }
+        })
+    }
 
     //Lee los datos del formulario
     const actualizarState = e => {
@@ -35,32 +65,11 @@ const NuevaCita = (props) => {
 
     };
 
-    //enviar una peticion  a la API
-    const crearNuevaCita = e => {
-        e.preventDefault();             //Evita eventos del  botton presionado
-        
-        Swal.fire({
-            position: 'top-center',
-            icon: 'success',
-            title: 'La cita fue creada!',
-            showConfirmButton: false,
-            timer: 1500
-          })
-
-          //enviar peticion por Axios
-        ClienteAxios.post('/pacientes', cita)
-            .then(respuesta => {
-                props.guardarConsulta(true);    //redirecciona hacia la app principal detecta que consultar esta como true vuelve a consultar a la BD y trae copia con los ultimos cambios
-                //redireccionar 
-                props.history.push('/');       //se utiliza para direccionar al usuario
-
-            })
-    }
 
     return (
 
         <Fragment>
-            <h1 className="my-5">Crear nueva cita</h1>
+            <h1 className="my-5">Editar cita</h1>
             <div className="container mt-5 py-5">
                 <div className="row">
                     <div className="col-12 mb-5 d-flex justify-content-center">
@@ -69,7 +78,6 @@ const NuevaCita = (props) => {
                     </div>
                     <div className="col-md-8 mx-auto">
                         <form
-                            onSubmit={crearNuevaCita} // para enviar la nueva cita a la API
                             className="bg-white p-5 bordered">
                             <div className="form-group">
                                 <label htmlFor="nombre">Nombre Mascota</label>
@@ -80,6 +88,7 @@ const NuevaCita = (props) => {
                                     name="nombre"
                                     placeholder="Nombre Mascota"
                                     onChange={actualizarState}
+                                    value={cita.nombre}
                                 />
                             </div>
 
@@ -92,6 +101,7 @@ const NuevaCita = (props) => {
                                     name="propietario"
                                     placeholder="Nombre Propietario"
                                     onChange={actualizarState}
+                                    value={cita.propietario}
                                 />
                             </div>
 
@@ -104,6 +114,7 @@ const NuevaCita = (props) => {
                                     name="telefono"
                                     placeholder="Teléfono"
                                     onChange={actualizarState}
+                                    value={cita.telefono}
                                 />
                             </div>
 
@@ -115,6 +126,7 @@ const NuevaCita = (props) => {
                                     id="fecha"
                                     name="fecha"
                                     onChange={actualizarState}
+                                    value={cita.fecha}
                                 />
                             </div>
 
@@ -126,6 +138,7 @@ const NuevaCita = (props) => {
                                     id="hora"
                                     name="hora"
                                     onChange={actualizarState}
+                                    value={cita.hora}
                                 />
                             </div>
 
@@ -136,11 +149,12 @@ const NuevaCita = (props) => {
                                     name="sintomas"
                                     rows="6"
                                     onChange={actualizarState}
+                                    value={cita.sintomas}
                                 ></textarea>
                             </div>
 
 
-                            <input type="submit" className="btn btn-primary mt-3 w-100 p-3 text-uppercase font-weight-bold" value="Crear Cita" />
+                            <input onClick={() => editarCita(props.cita._id)} className="btn btn-primary mt-3 w-100 p-3 text-uppercase font-weight-bold" value="Editar Cita" />
                         </form>
                     </div>
                 </div>
@@ -149,4 +163,4 @@ const NuevaCita = (props) => {
     );
 
 }
-export default withRouter(NuevaCita);
+export default withRouter(EditarCita);
